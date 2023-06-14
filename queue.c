@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <threads.h>
-/* Data Structure */
+/* -------------------Data Structure ----------------*/
 typedef struct Node {
     void* data;
     struct Node* next;
