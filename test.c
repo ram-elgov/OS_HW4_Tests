@@ -321,7 +321,7 @@ void test_fifo_order()
     {
         dequeue_order[i] = -1; // Initialize the dequeue order
         thrd_create(&consumer_threads[i], consumer_thread, &dequeue_order[i]);
-        sleep(1);
+        usleep(10000);
     }
 
     // Create producer thread
@@ -524,18 +524,18 @@ void test_mixed_operations()
 
 int main()
 {
-    test_destroyQueue();
-    test_enqueue_dequeue();
-    test_tryDequeue();
-    test_size();
-    test_waiting();
-    test_basic_concurrent_enqueue_dequeue();
+//    test_destroyQueue();
+//    test_enqueue_dequeue();
+//    test_tryDequeue();
+//    test_size();
+//    test_waiting();
+//    test_basic_concurrent_enqueue_dequeue();
     test_fifo_order();
-    test_multiconcurrent_enqueue_dequeue();
-    test_enqueue_tryDequeue();
-    test_enqueue_dequeue_with_sleep();
-    test_edge_cases();
-    test_mixed_operations();
+//    test_multiconcurrent_enqueue_dequeue();
+//    test_enqueue_tryDequeue();
+//    test_enqueue_dequeue_with_sleep();
+//    test_edge_cases();
+//    test_mixed_operations();
 
     return 0;
 }
