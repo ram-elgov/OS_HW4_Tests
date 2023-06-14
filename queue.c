@@ -58,6 +58,7 @@ void destroyQueue(void) {
   while (current != NULL) {
     Node *next = current->next;
     free(current);
+    current = NULL;
     current = next;
   }
 
@@ -69,7 +70,9 @@ void destroyQueue(void) {
     CvNode *cv_next = cv_current->next;
     cnd_destroy(cv_current->cv);  // Destroy conditional variable
     free(cv_current->cv);
+    cv_current->cv = NULL;
     free(cv_current);
+    cv_current = NULL;
     cv_current = cv_next;
   }
 
@@ -85,7 +88,7 @@ void destroyQueue(void) {
  * @brief Check if the conditional variables queue is empty
  * @return True if the queue is empty, false otherwise
  */
-bool isCvQueueEmpty(void) {
+bool IsCvQueueEmpty(void) {
   return cvQueue.head == NULL;
 }
 
@@ -93,7 +96,7 @@ bool isCvQueueEmpty(void) {
  * @brief Check if the data queue is empty
  * @return True if the queue is empty, false otherwise
  */
-bool isQueueEmpty(void) {
+bool IsQueueEmpty(void) {
   return queue.head == NULL;
 }
 
@@ -105,7 +108,7 @@ void enqueue(void *item) {
   mtx_lock(&queue.mtx);  // Lock the mutex because we are modifying the queue
 
   bool queue_was_empty = false;
-  if (isQueueEmpty()) {
+  if (IsQueueEmpty()) {
     queue_was_empty = true;
   }
 
@@ -114,7 +117,7 @@ void enqueue(void *item) {
   node->data = item;
   node->next = NULL;
 
-  if (queue.head == NULL) {  // If the queue is empty
+  if (IsQueueEmpty()) {
     queue.head = node;
     queue.tail = node;
   } else {  // If the queue is not empty
@@ -140,22 +143,23 @@ void enqueue(void *item) {
 void *dequeue(void) {
   mtx_lock(&queue.mtx);
 
-  if (isCvQueueEmpty() && !isQueueEmpty()) {
+  if (IsCvQueueEmpty() && !IsQueueEmpty()) {
     // Dequeue from the data queue
     Node *node = queue.head;
     void *item = node->data;
     queue.head = node->next;
     queue.item_count--;
 
-    if (queue.item_count == 0) {  // If the queue is empty
+    if (IsQueueEmpty()) {
       queue.tail = NULL;
     }
 
     free(node);
+    node = NULL;
     mtx_unlock(&queue.mtx);
 
     return item;
-  } else {  // If the queue is empty
+  } else {
     cnd_t *cv = malloc(sizeof(cnd_t));
     cnd_init(cv);
 
@@ -174,6 +178,7 @@ void *dequeue(void) {
 
     queue.wait_count++;
     cnd_wait(cv, &queue.mtx);  // Wait for signal
+
   }
 
   // Dequeue from the data queue
@@ -190,13 +195,13 @@ void *dequeue(void) {
   CvNode *cv_node = cvQueue.head;
   cnd_t *cv = cv_node->cv;
   cvQueue.head = cv_node->next;
-  cnd_destroy(cv);
   queue.wait_count--;
 
   if (queue.wait_count > 0) {
     cnd_signal(cvQueue.head->cv);
   }
 
+  cnd_destroy(cv);
   free(cv_node);
   free(node);
   mtx_unlock(&queue.mtx);

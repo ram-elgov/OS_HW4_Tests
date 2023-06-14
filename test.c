@@ -445,9 +445,9 @@ void test_edge_cases()
 
     // Dequeue from an empty queue - Should block until an item is enqueued
     // FIXME: comment this in, make sure it blocks, the comment it back out
-    // int *item = (int *)dequeue();
-    // assert(item == NULL);
-    // printf("Dequeue from an empty queue - Assertion failed: Expected NULL\n");
+//     int *item = (int *)dequeue();
+//     assert(item == NULL);
+//     printf("Dequeue from an empty queue - Assertion failed: Expected NULL\n");
 
     destroyQueue();
 
@@ -524,18 +524,18 @@ void test_mixed_operations()
 
 int main()
 {
-//    test_destroyQueue();
-//    test_enqueue_dequeue();
-//    test_tryDequeue();
-//    test_size();
-//    test_waiting();
-//    test_basic_concurrent_enqueue_dequeue();
+    test_destroyQueue();
+    test_enqueue_dequeue();
+    test_tryDequeue();
+    test_size();
+    test_waiting();
+    test_basic_concurrent_enqueue_dequeue();
     test_fifo_order();
-//    test_multiconcurrent_enqueue_dequeue();
-//    test_enqueue_tryDequeue();
-//    test_enqueue_dequeue_with_sleep();
-//    test_edge_cases();
-//    test_mixed_operations();
+    test_multiconcurrent_enqueue_dequeue(); /**/
+    test_enqueue_tryDequeue();
+    test_enqueue_dequeue_with_sleep();
+    test_edge_cases();
+    test_mixed_operations();
 
     return 0;
 }
